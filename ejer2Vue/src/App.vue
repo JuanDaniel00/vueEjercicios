@@ -5,13 +5,23 @@
         <div>
           <h1>
             Precio total del inventario:
-            {{ productos.reduce((acc, producto) => acc + producto.precio, 0) }}
+            {{
+              productos.reduce(
+                (acc, producto) => acc + producto.precio * producto.cantidad,
+                0
+              )
+            }}
           </h1>
         </div>
         <div>
           <h1>
             Costo total del inventario:
-            {{ productos.reduce((acc, producto) => acc + producto.costo, 0) }}
+            {{
+              productos.reduce(
+                (acc, producto) => acc + producto.costo * producto.cantidad,
+                0
+              )
+            }}
           </h1>
         </div>
         <div>
@@ -27,29 +37,72 @@
         </div>
       </div>
     </div>
-    <div class="divForm">
-      <div class="divForm1 formsDiv">
-        <div class="divName divInput">
-          <label for="name">Digite el nombre del producto</label>
-          <input type="text" id="name" v-model="nombre" />
-        </div>
-        <div class="divPrice divInput">
-          <label for="lastName">Digite el precio</label>
-          <input type="text" id="precio" v-model.number="precio" />
-        </div>
-        <div class="divCost divInput">
-          <label for="birthdate">Digite el costo</label>
-          <input type="text" id="costo" v-model.number="costo" />
-        </div>
-        <div class="divSupplier divInput">
-          <label for="birthdate">Digite el nombre del proveedor</label>
-          <input type="text" id="proveedor" v-model="proveedor" />
-        </div>
-      </div>
+    <!-- Button trigger modal -->
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+    >
+      Abrir Formulario <i class="bi bi-x-lg"></i>
+    </button>
 
-      <div class="divForm2 formsDiv">
-        <div class="divButton divInput">
-          <button class="btn" @click="validacion()">Agregar</button>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Formulario</h1>
+            <button
+              type="button"
+              class="btn-close button3"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <span class="X"></span>
+              <span class="Y"></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="divForm">
+              <div class="divForm1 formsDiv">
+                <div class="divName divInput">
+                  <label for="name">Digite el nombre del producto</label>
+                  <input type="text" id="name" v-model="nombre" />
+                </div>
+                <div class="divPrice divInput">
+                  <label for="lastName">Digite el precio</label>
+                  <input type="text" id="precio" v-model.number="precio" />
+                </div>
+                <div class="divCost divInput">
+                  <label for="birthdate">Digite el costo</label>
+                  <input type="text" id="costo" v-model.number="costo" />
+                </div>
+                <div class="divSupplier divInput">
+                  <label for="birthdate">Digite el nombre del proveedor</label>
+                  <input type="text" id="proveedor" v-model="proveedor" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+            <div class="divButton divInput">
+              <button class="btn" @click="validacion()">Agregar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -98,9 +151,7 @@
               </button>
             </td>
             <td>
-              {{
-                producto.ganancias * producto.cantidad
-              }}
+              {{ producto.ganancias * producto.cantidad }}
             </td>
           </tr>
         </tbody>
@@ -122,26 +173,49 @@ let proveedor = ref("");
 let ganancias = ref("");
 
 function validacion() {
-  if (nombre.value === "") {
-    alert("Digite el nombre del producto");
-    return;
-  }
-  if (precio.value < 0) {
-    alert("Digite el precio");
-    return;
-  }
-  if (costo.value < 0) {
-    alert("Digite el costo");
-    return;
-  }
-  if (proveedor.value === "") {
-    alert("Digite el proveedor");
+  if (
+    nombre.value === "" ||
+    precio.value < 0 ||
+    costo.value < 0 ||
+    proveedor.value === ""
+  ) {
+    Swal.fire({
+      title: "No pueden quedar campos vacios",
+      showClass: {
+        popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `,
+      },
+      hideClass: {
+        popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `,
+      },
+    });
     return;
   }
   if (precio.value < costo.value) {
-    console.log("precio" + precio.value);
-    console.log("costo" + costo.value);
-    alert("El precio no puede ser menor al costo");
+    Swal.fire({
+      title: "El precio no puede ser menor al costo",
+      showClass: {
+        popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `,
+      },
+      hideClass: {
+        popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `,
+      },
+    });
     return;
   }
   agregar();
@@ -178,7 +252,7 @@ const limpiarCampos = () => {
 };
 </script>
 
-<style scoped>
+<style>
 * {
   margin: 0;
   padding: 0;
@@ -193,6 +267,18 @@ img {
   height: 20px;
 }
 
+.modal-header {
+  border-bottom: 2px solid #4caf50;
+}
+
+.modal-footer {
+  border-top: 2px solid #4caf50;
+}
+
+body {
+  background-color: #242424 !important;
+}
+
 .divFixed {
   position: fixed;
   top: 0;
@@ -200,6 +286,26 @@ img {
   width: 100%;
   background-color: #f1f1f110;
   color: #45a049;
+}
+
+.modal-content {
+  background: #242424 !important;
+}
+.modal-title {
+  color: antiquewhite;
+}
+.btn-close {
+  color: #c91a1a !important;
+}
+
+label {
+  color: antiquewhite;
+}
+
+.btn-primary {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 
 .divPalabras {
@@ -211,6 +317,76 @@ img {
   margin: 10px;
 }
 
+.button3 {
+  position: relative;
+  width: 2em;
+  height: 2em;
+  border: none;
+  background: #242424;
+  border-radius: 5px;
+  transition: background 0.5s;
+}
+
+.X {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5em;
+  height: 1.5px;
+  background-color: #fff;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.Y {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5em;
+  height: 1.5px;
+  background-color: #fff;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.close {
+  position: absolute;
+  display: flex;
+  padding: 0.8rem 1.5rem;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  top: -70%;
+  left: 50%;
+  width: 3em;
+  height: 1.7em;
+  font-size: 12px;
+  background-color: #242424;
+  color: rgb(187, 229, 236);
+  border: none;
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.button3:hover {
+  background-color: rgb(211, 21, 21);
+}
+
+.button3:active {
+  background-color: rgb(130, 0, 0);
+}
+
+.button3:hover > .close {
+  animation: close 0.2s forwards 0.25s;
+}
+
+@keyframes close {
+  100% {
+    opacity: 1;
+  }
+}
+
 .divPalabras h1 {
   color: #45a049;
   font-size: 1.2em;
@@ -218,9 +394,9 @@ img {
 
 .mainDiv {
   display: flex;
-  justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100vw;
 }
 
 .divForm {
@@ -265,6 +441,13 @@ img {
   justify-content: center;
   align-items: center;
   width: 100%;
+  position: absolute;
+  top: 53px;
+}
+
+#app {
+  margin: 0;
+  padding: 0;
 }
 
 table {
@@ -281,6 +464,10 @@ th,
 td {
   border: 1px solid black;
   padding: 10px;
+}
+
+td {
+  color: bisque;
 }
 
 button {
