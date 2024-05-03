@@ -1,9 +1,6 @@
 <template>
   <div class="mainDiv">
     <div class="divFixed">
-      <!-- Costo total del inventario: multiplicar costo por precio y sumar todos los productos
-      Precio total del inventario: multiplicar precio por precio y sumar todos los productos
-      Ganancia total: resta entre precio total menos costo total -->
       <div class="divPalabras">
         <div>
           <h1>
@@ -100,7 +97,11 @@
                 />
               </button>
             </td>
-            <td>{{ producto.ganancias }}</td>
+            <td>
+              {{
+                producto.ganancias * producto.cantidad
+              }}
+            </td>
           </tr>
         </tbody>
       </table>
